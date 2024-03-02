@@ -8,6 +8,8 @@ Configurable payouts, thresholds, vehicles, xp gain and drop off locations for e
 
 **Note**: Just because you are Tier 'B' for example, doesn't mean it's always gonna be a 'B' tier vehicle, it's chance based and you may get a vehicle that is one tier lower.
 
+**If you get an error for nil value (global GetActivePlayers), make sure your ox lib is up to date and contains the GetActivePlayers() function in the init.lua.**
+
 ## Requirements
 
 * [ox_lib](https://github.com/overextended/ox_lib/releases/tag/v3.16.2)
