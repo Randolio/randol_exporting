@@ -135,9 +135,9 @@ lib.callback.register('randol_exports:server:successMission', function(source, n
     local src = source
     local Player = GetPlayer(src)
     local cid = GetPlyIdentifier(Player)
-
+    local pos = GetEntityCoords(GetPlayerPed(src))
     local vehicle = NetworkGetEntityFromNetworkId(netid)
-    if not activePlys[src] or not DoesEntityExist(vehicle) or vehicle ~= activePlys[src].entity then return false end
+    if not activePlys[src] or not DoesEntityExist(vehicle) or vehicle ~= activePlys[src].entity or #(pos - activePlys[src].location) > 10.0 then return false end
 
     local payout = activePlys[src].payout
     Server.MissionRewards(Player, payout)
