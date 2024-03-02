@@ -48,8 +48,8 @@ end
 local function addExportExp(src, cid, amount)
     cachedPlayers[cid].xp += amount
     cachedPlayers[cid].completed += 1
-    MySQL.update.await('UPDATE export_xp SET xp = ?, completed = ? WHERE cid = ?', {cachedPlayers[cid].xp, cachedPlayers[cid].completed, cid})
     DoNotification(src, locale('gained_exp'):format(amount), "success")
+    MySQL.update.await('UPDATE export_xp SET xp = ?, completed = ? WHERE cid = ?', {cachedPlayers[cid].xp, cachedPlayers[cid].completed, cid})
     TriggerClientEvent('randol_exports:client:cacheRep', src, cachedPlayers[cid])
 end
 
@@ -158,6 +158,7 @@ function PlayerHasLoaded(src)
             cachedPlayers[cid] = { xp = result[1].xp, completed = result[1].completed, failed = result[1].failed, tier = getTierFromExp(result[1].xp) }
         else
             cachedPlayers[cid] = { xp = 0, completed = 0, failed = 0, tier = 'D', }
+            MySQL.insert.await('INSERT INTO export_xp (cid, xp, completed, failed) VALUES (?, ?, ?, ?)', {cid, 0, 0 ,0})
         end
         TriggerClientEvent('randol_exports:client:cacheRep', src, cachedPlayers[cid])
     end
