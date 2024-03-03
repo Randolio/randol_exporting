@@ -303,10 +303,10 @@ RegisterNetEvent('randol_exports:client:startMission', function(data)
     activeData = data
 
     EXPORT_VEHICLE = lib.waitFor(function()
-        if NetworkDoesEntityExistWithNetworkId(data.netid) then
+        if NetworkDoesEntityExistWithNetworkId(data.netid) and NetworkGetEntityOwner(NetworkGetEntityFromNetworkId(data.netid)) == cache.playerId then
             return NetToVeh(data.netid)
         end
-    end, 'Could not load entity in time.', 1000)
+    end, 'Could not load entity in time and get ownership.', 5000)
 
     SetVehicleOnGroundProperly(EXPORT_VEHICLE)
 
