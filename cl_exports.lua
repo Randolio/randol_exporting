@@ -303,10 +303,24 @@ RegisterNetEvent('randol_exports:client:startMission', function(data)
     activeData = data
 
     EXPORT_VEHICLE = lib.waitFor(function()
-        if NetworkDoesEntityExistWithNetworkId(data.netid) and NetworkGetEntityOwner(NetworkGetEntityFromNetworkId(data.netid)) == cache.playerId then
+        if NetworkDoesEntityExistWithNetworkId(data.netid) then
             return NetToVeh(data.netid)
         end
     end, 'Could not load entity in time and get ownership.', 5000)
+
+    if not EXPORT_VEHICLE then
+        return lib.callback.await('randol_exports:server:spawningFailed', false)
+    end
+    
+    local isOwner = lib.waitFor(function()
+        if NetworkGetEntityOwner(EXPORT_VEHICLE) == cache.playerId then
+            return true
+        end
+    end, 'Could not get ownership.', 5000)
+    
+    if not isOwner then
+        return lib.callback.await('randol_exports:server:spawningFailed', false)
+    end
 
     SetVehicleOnGroundProperly(EXPORT_VEHICLE)
 
@@ -366,4 +380,21 @@ end)
 RegisterNetEvent('randol_exports:client:cacheRep', function(info)
     if GetInvokingResource() or not hasPlyLoaded() or not info then return end
     userInfo = info
+end)
+
+AddStateBagChangeHandler("initVehicle", nil, function(bagName, key, value, reserved, replicated)
+    if not value then return end
+
+    local entity = GetEntityFromStateBagName(bagName)
+    if not entity or not DoesEntityExist(entity) then return end
+
+    for i = -1, 0 do
+        local ped = GetPedInVehicleSeat(entity, i)
+
+        if ped ~= cache.ped and ped > 0 and NetworkGetEntityOwner(ped) == cache.playerId then
+            DeleteEntity(ped)
+        end
+    end
+    
+    Entity(entity).state:set('initVehicle', nil, true)
 end)

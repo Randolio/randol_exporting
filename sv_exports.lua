@@ -9,6 +9,8 @@ local function spawnExportVehicle(source, model)
 
     while not DoesEntityExist(vehicle) do Wait(0) end 
 
+    Entity(vehicle).state:set('initVehicle', true, true)
+
     while GetVehiclePedIsIn(ped, false) ~= vehicle do TaskWarpPedIntoVehicle(ped, vehicle, -1) Wait(0) end
 
     return vehicle
@@ -146,6 +148,14 @@ lib.callback.register('randol_exports:server:successMission', function(source, n
     activePlys[src] = nil
     DeleteEntity(vehicle)
     return true
+end)
+
+lib.callback.register('randol_exports:server:spawningFailed', function(source)
+    if not activePlys[source] then return end
+    if DoesEntityExist(activePlys[source].entity) then
+        DeleteEntity(activePlys[source].entity)
+    end
+    activePlys[source] = nil
 end)
 
 function PlayerHasLoaded(src)
