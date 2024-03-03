@@ -367,20 +367,3 @@ RegisterNetEvent('randol_exports:client:cacheRep', function(info)
     if GetInvokingResource() or not hasPlyLoaded() or not info then return end
     userInfo = info
 end)
-
-AddStateBagChangeHandler("initVehicle", nil, function(bagName, key, value, reserved, replicated)
-    if not value then return end
-
-    local entity = GetEntityFromStateBagName(bagName)
-    if not entity or not DoesEntityExist(entity) then return end
-
-    for i = -1, 0 do
-        local ped = GetPedInVehicleSeat(entity, i)
-
-        if ped ~= cache.ped and ped > 0 and NetworkGetEntityOwner(ped) == cache.playerId then
-            DeleteEntity(ped)
-        end
-    end
-    
-    Entity(entity).state:set('initVehicle', nil, true)
-end)
