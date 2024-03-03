@@ -304,7 +304,7 @@ RegisterNetEvent('randol_exports:client:startMission', function(data)
 
     EXPORT_VEHICLE = lib.waitFor(function()
         if NetworkDoesEntityExistWithNetworkId(data.netid) then
-            return NetToVeh(data.netid)
+            return NetworkGetEntityFromNetworkId(data.netid)
         end
     end, 'Could not load entity in time and get ownership.', 5000)
 
@@ -395,6 +395,6 @@ AddStateBagChangeHandler("initVehicle", nil, function(bagName, key, value, reser
             DeleteEntity(ped)
         end
     end
-    
+
     Entity(entity).state:set('initVehicle', nil, true)
 end)
