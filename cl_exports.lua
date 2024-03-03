@@ -308,20 +308,6 @@ RegisterNetEvent('randol_exports:client:startMission', function(data)
         end
     end, 'Could not load entity in time and get ownership.', 5000)
 
-    if not EXPORT_VEHICLE then
-        return lib.callback.await('randol_exports:server:spawningFailed', false)
-    end
-    
-    local isOwner = lib.waitFor(function()
-        if NetworkGetEntityOwner(EXPORT_VEHICLE) == cache.playerId then
-            return true
-        end
-    end, 'Could not get ownership.', 5000)
-    
-    if not isOwner then
-        return lib.callback.await('randol_exports:server:spawningFailed', false)
-    end
-
     SetVehicleOnGroundProperly(EXPORT_VEHICLE)
 
     local label = GetLabelText(GetDisplayNameFromVehicleModel(GetEntityModel(EXPORT_VEHICLE)))

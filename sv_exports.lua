@@ -4,12 +4,11 @@ local activePlys = {}
 local cachedPlayers = {}
 
 local function spawnExportVehicle(source, model)
-    local vehicle = CreateVehicleServerSetter(joaat(model), 'automobile', Config.VehicleSpawn.x, Config.VehicleSpawn.y, Config.VehicleSpawn.z, Config.VehicleSpawn.w)
+    -- Should use server setter but cba with the annoying issues that can occur.
+    local vehicle = CreateVehicle(joaat(model), Config.VehicleSpawn.x, Config.VehicleSpawn.y, Config.VehicleSpawn.z, Config.VehicleSpawn.w, true, true)
     local ped = GetPlayerPed(source)
 
     while not DoesEntityExist(vehicle) do Wait(0) end 
-
-    Entity(vehicle).state:set('initVehicle', true, true)
 
     while GetVehiclePedIsIn(ped, false) ~= vehicle do TaskWarpPedIntoVehicle(ped, vehicle, -1) Wait(0) end
 
@@ -148,14 +147,6 @@ lib.callback.register('randol_exports:server:successMission', function(source, n
     activePlys[src] = nil
     DeleteEntity(vehicle)
     return true
-end)
-
-lib.callback.register('randol_exports:server:spawningFailed', function(source)
-    if not activePlys[source] then return end
-    if DoesEntityExist(activePlys[source].entity) then
-        DeleteEntity(activePlys[source].entity)
-    end
-    activePlys[source] = nil
 end)
 
 function PlayerHasLoaded(src)
