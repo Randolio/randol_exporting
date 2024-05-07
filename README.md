@@ -17,3 +17,5 @@ Configurable payouts, thresholds, vehicles, xp gain and drop off locations for e
 ## Showcase
 
 * [preview](https://streamable.com/l99oxe)
+
+**You have permission to use this in your server and edit for your personal needs but are not allowed to redistribute.**
