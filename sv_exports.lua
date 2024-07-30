@@ -162,7 +162,9 @@ function PlayerHasLoaded(src)
             MySQL.insert.await('INSERT INTO export_xp (cid, xp, completed, failed) VALUES (?, ?, ?, ?)', {cid, 0, 0 ,0})
         end
     end
-    TriggerClientEvent('randol_exports:client:cacheRep', src, cachedPlayers[cid])
+    SetTimeout(2000, function()
+        TriggerClientEvent('randol_exports:client:cacheRep', src, cachedPlayers[cid])
+    end)
 end
 
  -- For whatever reason the resource gets restarted live. Could be a more efficient way to do this?
