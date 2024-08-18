@@ -1,9 +1,25 @@
-local Config = lib.require('shared')
+local Config = lib.load('shared')
 local isTimerActive, droppingOff = false
 local startTime, elapsedTime = 0, 0
 local mainTimer, tempTimer, formattedTime, currentTime, deltaTime, SOUND_ID, EXPORT_VEHICLE, EXPORT_PED, DROP_OFF_ZONE, DROP_OFF_RADIUS, pedInteract, exportPedZone
 local activeData = {}
 local userInfo = {}
+
+local function targetLocalEntity(entity, options, distance)
+    if GetResourceState('ox_target') == 'started' then
+        for _, option in ipairs(options) do
+            option.distance = distance
+            option.onSelect = option.action
+            option.action = nil
+        end
+        exports.ox_target:addLocalEntity(entity, options)
+    else
+        exports['qb-target']:AddTargetEntity(entity, {
+            options = options,
+            distance = distance
+        })
+    end
+end
 
 local function missionReset()
     isTimerActive = false
@@ -240,7 +256,11 @@ local function removePedSpawned()
         DeleteEntity(EXPORT_PED)
         EXPORT_PED = nil
         if Config.UseTarget then
-            exports['qb-target']:RemoveTargetEntity(EXPORT_PED, "Interact")
+            if GetResourceState('ox_target') == 'started' then
+                exports.ox_target:removeLocalEntity(EXPORT_PED, 'Interact')
+            else
+                exports['qb-target']:RemoveTargetEntity(EXPORT_PED, 'Interact')
+            end
             EXPORT_PED = nil
         else
             if pedInteract then
@@ -265,18 +285,13 @@ local function spawnPed()
     TaskStartScenarioInPlace(EXPORT_PED, 'WORLD_HUMAN_CLIPBOARD', 0, true)
     SetPedDefaultComponentVariation(EXPORT_PED)
     if Config.UseTarget then
-        exports['qb-target']:AddTargetEntity(EXPORT_PED, {
-            options = {
-                {
-                    icon = locale('target_icon_rep'),
-                    label = locale('target_label_rep'),
-                    action = function()
-                        interactContext()
-                    end,
-                },
+        targetLocalEntity(EXPORT_PED, { 
+            {
+                icon = locale('target_icon_rep'),
+                label = locale('target_label_rep'),
+                action = interactContext,
             },
-            distance = 2.0
-        })
+        }, 2.0)
     else
         pedInteract = lib.zones.box({
             coords = vec3(Config.PedCoords.x, Config.PedCoords.y, Config.PedCoords.z+0.5), 

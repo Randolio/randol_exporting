@@ -1,5 +1,5 @@
-local Config = lib.require('shared')
-local Server = lib.require('sv_config')
+local Config = lib.load('shared')
+local Server = lib.load('sv_config')
 local activePlys = {}
 local cachedPlayers = {}
 
@@ -167,7 +167,6 @@ function PlayerHasLoaded(src)
     end)
 end
 
- -- For whatever reason the resource gets restarted live. Could be a more efficient way to do this?
 local function handleLiveRestart()
     local players = GetActivePlayers()
     if #players == 0 then return end
